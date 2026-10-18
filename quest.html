@@ -1,245 +1,265 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Секретная миссия</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0f;
-            color: #e2e8f0;
-            overflow-x: hidden;
-        }
-        .display { font-family: 'Playfair Display', serif; }
-        .screen {
-            min-height: 100vh;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            text-align: center;
-            position: relative;
-        }
-        .screen.active { display: flex; }
-        
-        .btn {
-            background: linear-gradient(135deg, #7c3aed, #db2777);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn:hover {
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 20px 40px -10px rgba(219, 39, 119, 0.4);
-        }
-        .btn:active { transform: scale(0.98); }
-        
-        .fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .pulse-glow {
-            animation: pulseGlow 2s ease-in-out infinite;
-        }
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(219, 39, 119, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(219, 39, 119, 0.6); }
-        }
-        
-        .option {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.25s;
-        }
-        .option:hover {
-            background: rgba(124, 58, 237, 0.2);
-            border-color: #7c3aed;
-            transform: translateX(8px);
-        }
-        
-        #confetti {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 100;
-        }
-        
-        .treasure-box {
-            background: linear-gradient(145deg, #1e1b4b, #312e81);
-            border: 1px solid rgba(167, 139, 250, 0.3);
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="dark">
+<title>Секретная миссия</title>
+<meta property="og:title" content="Секретная миссия">
+<meta property="og:description" content="Задание только для тебя.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--sea:#06222b;--deep:#04171d;--foam:#0f4a52;--gold:#f2b84b;--coral:#ff6b5a;--ink:#e9f3ee;--mute:#92b6b2}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(120% 80% at 50% 0%,var(--foam),var(--sea) 55%,var(--deep)) fixed;color:var(--ink);font:17px/1.55 Manrope,system-ui,sans-serif;overflow-x:hidden}
+.stage{display:none;min-height:100svh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 22px;gap:20px}
+.stage.on{display:flex;animation:in .5s ease both}
+@keyframes in{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+h1{font:700 clamp(26px,7.5vw,40px)/1.15 Unbounded,system-ui,sans-serif;margin:0;letter-spacing:-.01em;max-width:14em}
+h2{font:700 clamp(21px,5.8vw,28px)/1.25 Unbounded,system-ui,sans-serif;margin:0;max-width:16em}
+p{margin:0;max-width:30em;color:var(--mute)}
+.msg{min-height:3.2em;font-size:16px;max-width:22em}
+.msg.good{color:var(--gold)}.msg.bad{color:var(--coral)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+.dots{display:flex;gap:8px}
+.dots b{width:10px;height:10px;border-radius:50%;background:var(--foam)}
+.dots b.on{background:var(--gold)}
+.opts{display:grid;gap:12px;width:100%;max-width:380px}
+.opt{padding:15px 18px;border-radius:14px;border:1.5px solid var(--foam);background:rgba(255,255,255,.05);color:var(--ink);font:600 17px Manrope,sans-serif;cursor:pointer}
+.opt:active{transform:scale(.98)}
+.opt.ok{background:var(--gold);color:#2a1c00;border-color:var(--gold)}
+.opt.bad{border-color:var(--coral);color:var(--coral);background:rgba(255,107,90,.08);opacity:.75}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
+/* sonar - the one big moment */
+.sonar{position:relative;width:min(80vw,350px);aspect-ratio:1;display:grid;place-items:center;border-radius:50%;
+ background:repeating-radial-gradient(circle,transparent 0 34px,rgba(242,184,75,.14) 35px 36px)}
+.sonar::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(242,184,75,.38),transparent 26%);animation:spin 4s linear infinite}
+.sonar i{position:absolute;inset:0;border:1.5px solid var(--gold);border-radius:50%;opacity:0;animation:ping 3.6s cubic-bezier(.2,.6,.3,1) infinite}
+.sonar i:nth-child(2){animation-delay:1.2s}.sonar i:nth-child(3){animation-delay:2.4s}
+@keyframes ping{0%{transform:scale(.25);opacity:.9}100%{transform:scale(1);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.go{position:relative;z-index:2;width:52%;aspect-ratio:1;border-radius:50%;border:0;background:var(--gold);color:#2a1c00;font:700 clamp(13px,3.9vw,16px)/1.25 Unbounded,sans-serif;padding:14px;cursor:pointer;box-shadow:0 0 0 8px rgba(242,184,75,.18),0 0 50px rgba(242,184,75,.5)}
+.go:active{transform:scale(.96)}
+
+/* hold-to-scan */
+.scan{position:relative;width:190px;height:190px;border:0;background:none;padding:0;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;color:var(--ink)}
+.scan svg{width:100%;height:100%;transform:rotate(-90deg)}
+.scan span{position:absolute;inset:0;display:grid;place-items:center;font:600 18px Unbounded,sans-serif;pointer-events:none}
+
+/* finale */
+.trophy{font-size:64px;line-height:1}
+.prize{max-width:380px;padding:26px 22px;border-radius:22px;border:1.5px solid var(--gold);background:var(--deep);font:700 clamp(19px,5.4vw,24px)/1.35 Unbounded,sans-serif;color:var(--gold);box-shadow:0 0 60px rgba(242,184,75,.25)}
+#cf{position:fixed;inset:0;pointer-events:none;display:none;z-index:9}
+@media (prefers-reduced-motion:reduce){.sonar::after,.sonar i{animation:none}.stage.on{animation:none}}
+</style>
 </head>
 <body>
-    <!-- Экран 1: Старт -->
-    <div id="screen1" class="screen active">
-        <div class="max-w-lg fade-in">
-            <div class="text-6xl mb-6">🗝️</div>
-            <h1 class="display text-4xl md:text-5xl font-bold mb-4 leading-tight">
-                Для поиска<br>сокровища
-            </h1>
-            <p class="text-slate-400 text-lg mb-10">жми сюда</p>
-            <button onclick="goTo(2)" class="btn text-white font-semibold text-lg px-10 py-4 rounded-2xl pulse-glow">
-                Начать миссию
-            </button>
-        </div>
-    </div>
+<main>
+  <section class="stage on" id="s0">
+    <h1><span data-name></span>, у тебя секретная миссия</h1>
+    <div class="sonar"><i></i><i></i><i></i><button class="go" id="start">Для поиска сокровища жми сюда</button></div>
+    <p>Задание только для тебя</p>
+  </section>
 
-    <!-- Экран 2: Введение -->
-    <div id="screen2" class="screen">
-        <div class="max-w-xl fade-in">
-            <div class="text-5xl mb-6">🕵️‍♂️</div>
-            <h2 class="display text-3xl md:text-4xl font-bold mb-6">Секретная миссия</h2>
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8 text-left text-slate-300 leading-relaxed">
-                <p class="mb-4">Агент «Люда», приём.</p>
-                <p class="mb-4">По нашим данным, в доме находится особо ценный груз. Он спрятан в самом неожиданном месте.</p>
-                <p>Чтобы получить координаты — нужно пройти несколько испытаний. Готова?</p>
-            </div>
-            <button onclick="goTo(3)" class="btn text-white font-semibold px-8 py-3.5 rounded-xl">
-                Готова. Давай.
-            </button>
-        </div>
-    </div>
+  <section class="stage" id="s1">
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <p id="qn"></p>
+    <h2 id="qt"></h2>
+    <div class="opts" id="opts"></div>
+    <p class="msg" id="qmsg"></p>
+  </section>
 
-    <!-- Экран 3: Вопрос 1 -->
-    <div id="screen3" class="screen">
-        <div class="max-w-lg fade-in w-full">
-            <div class="text-sm text-violet-400 font-medium mb-3 tracking-widest uppercase">Испытание 1/3</div>
-            <h2 class="display text-2xl md:text-3xl font-bold mb-8">Кто самый красивый человек в этом доме?</h2>
-            <div class="space-y-3">
-                <button onclick="goTo(4)" class="option w-full text-left px-5 py-4 rounded-xl">Я 💅</button>
-                <button onclick="goTo(4)" class="option w-full text-left px-5 py-4 rounded-xl">Конечно я</button>
-                <button onclick="goTo(4)" class="option w-full text-left px-5 py-4 rounded-xl">Ну я же</button>
-            </div>
-        </div>
-    </div>
+  <section class="stage" id="s2">
+    <h1>Включи сканер</h1>
+    <p>Осталось последнее испытание. Зажми кнопку и держи, пока сканер не расшифрует сигнал.</p>
+    <button class="scan" id="scan" aria-label="Зажми и держи">
+      <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="rgba(255,255,255,.04)" stroke="#0f4a52" stroke-width="8"/><circle id="ring" cx="60" cy="60" r="54" fill="none" stroke="#f2b84b" stroke-width="8" stroke-linecap="round"/></svg>
+      <span>держи</span>
+    </button>
+    <p class="msg" id="scanmsg">Жду сигнала…</p>
+  </section>
 
-    <!-- Экран 4: Вопрос 2 -->
-    <div id="screen4" class="screen">
-        <div class="max-w-lg fade-in w-full">
-            <div class="text-sm text-violet-400 font-medium mb-3 tracking-widest uppercase">Испытание 2/3</div>
-            <h2 class="display text-2xl md:text-3xl font-bold mb-8">Что делает мужчина, когда очень хочет, чтобы жена его поцеловала?</h2>
-            <div class="space-y-3">
-                <button onclick="goTo(5)" class="option w-full text-left px-5 py-4 rounded-xl">Прячет сигареты и устраивает квест</button>
-                <button onclick="goTo(5)" class="option w-full text-left px-5 py-4 rounded-xl">Молча смотрит и надеется</button>
-                <button onclick="goTo(5)" class="option w-full text-left px-5 py-4 rounded-xl">Оба варианта верны</button>
-            </div>
-        </div>
-    </div>
+  <section class="stage" id="s3">
+    <div class="trophy">🏆</div>
+    <h1>Поздравляем!</h1>
+    <div class="prize" id="prize"></div>
+    <p id="sign"></p>
+  </section>
+</main>
+<canvas id="cf"></canvas>
 
-    <!-- Экран 5: Вопрос 3 -->
-    <div id="screen5" class="screen">
-        <div class="max-w-lg fade-in w-full">
-            <div class="text-sm text-violet-400 font-medium mb-3 tracking-widest uppercase">Испытание 3/3</div>
-            <h2 class="display text-2xl md:text-3xl font-bold mb-8">Где обычно сидит самый важный человек в доме, когда хочет отдохнуть?</h2>
-            <div class="space-y-3">
-                <button onclick="goTo(6)" class="option w-full text-left px-5 py-4 rounded-xl">В кресле</button>
-                <button onclick="goTo(6)" class="option w-full text-left px-5 py-4 rounded-xl">В любимом кресле</button>
-                <button onclick="goTo(6)" class="option w-full text-left px-5 py-4 rounded-xl">В том самом кресле</button>
-            </div>
-        </div>
-    </div>
+<script>
+/* ====== ЗДЕСЬ МЕНЯЕШЬ ТЕКСТЫ, ВОПРОСЫ И ОТВЕТЫ ====== */
+const CONFIG = {
+  name: "Милка",
+  final: "Ваши ментоловые Montego находятся в подлокотнике белого кресла 🏴‍☠️",
+  sign: "С любовью, твой Серж ❤️",
+  shuffle: true   // перемешивать варианты ответов (true / false)
+};
+/* ok:true - правильный ответ, say - реакция на выбор */
+const STEPS = [
+  { q: "Кто самый красивый человек на планете?", o: [
+    { t: "Милка", ok: 1, say: "Единогласно. Комиссия подтверждает." },
+    { t: "Брэд Питт", say: "Красивый, но не настолько. Попробуй ещё." },
+    { t: "Серж", say: "Он скромно промолчит. Выбери другой ответ." }
+  ]},
+  { q: "Когда была наша свадьба?", o: [
+    { t: "2 ноября 2024", ok: 1, say: "Самый счастливый день. Верно! 💍" },
+    { t: "20 апреля", say: "В этот день родилась Милка. Дата важная, но не свадьба." },
+    { t: "11 января", say: "Это мой день рождения. Подарки принимаются, но свадьба не тогда." },
+    { t: "14 декабря 2024", say: "В этот день ты приехала в Штаты. Тоже праздник, но свадьба была раньше." }
+  ]},
+  { q: "Когда был наш первый поцелуй?", o: [
+    { t: "31 марта 2023", ok: 1, say: "Помнишь! Верно 💋" },
+    { t: "2 ноября 2024", say: "К свадьбе мы уже целовались, и не раз." },
+    { t: "14 декабря 2024", say: "Нет, так долго ждать я бы не смог." },
+    { t: "11 января", say: "Мой день рождения. Приятно, но поцелуй был в другой день." }
+  ]},
+  { q: "В какую страну ты выехала первой, когда ехала из Украины ко мне?", o: [
+    { t: "Словакия", ok: 1, say: "Да! Первая граница на пути ко мне 🇸🇰" },
+    { t: "Венгрия", say: "Близко, но мимо. Попробуй ещё." },
+    { t: "Румыния", say: "Тоже сосед, но не тот. Подумай, откуда ты ехала." },
+    { t: "Молдова", say: "Почти, но нет." }
+  ]},
+  { scan: true },
+  { q: "Какой подарок получил муж, а достался всей семье бесплатно?", o: [
+    { t: "Белое кресло", ok: 1, say: "Это оно! Миссия почти выполнена." },
+    { t: "Духи Valentino", say: "Пахнет приятно, но это не тот подарок." },
+    { t: "Шарики-цифры", say: "Красиво, но это не тот подарок." }
+  ]}
+];
+/* ================================================ */
 
-    <!-- Экран 6: Финал -->
-    <div id="screen6" class="screen">
-        <div class="max-w-lg fade-in">
-            <div class="text-6xl mb-6">🏆</div>
-            <h2 class="display text-3xl md:text-4xl font-bold mb-4">Миссия выполнена</h2>
-            <p class="text-slate-400 mb-8">Координаты сокровища расшифрованы</p>
-            
-            <div class="treasure-box rounded-2xl p-6 md:p-8 mb-8">
-                <p class="text-violet-300 text-sm font-medium mb-3 tracking-wide uppercase">Местоположение</p>
-                <p class="text-xl md:text-2xl font-semibold leading-snug">
-                    Подлокотник<br>
-                    <span class="text-pink-400">твоего кресла</span>
-                </p>
-            </div>
-            
-            <p class="text-slate-400 text-sm mb-6">
-                Теперь можешь идти и забирать награду 😌
-            </p>
-            
-            <p class="text-slate-500 text-xs">
-                С любовью, твой личный агент ❤️
-            </p>
-        </div>
-    </div>
+const $ = id => document.getElementById(id);
+const buzz = p => navigator.vibrate && navigator.vibrate(p);
+const TOTAL = STEPS.filter(s => s.q).length;
+let n = 0;
+STEPS.forEach(s => { if (s.q) s.n = ++n; });
+document.querySelectorAll("[data-name]").forEach(e => e.textContent = CONFIG.name);
+$("prize").textContent = CONFIG.final;
+$("sign").textContent = CONFIG.sign;
 
-    <canvas id="confetti"></canvas>
+function show(id){
+  document.querySelectorAll(".stage").forEach(s => s.classList.toggle("on", s.id === id));
+  scrollTo(0, 0);
+}
 
-    <script>
-        function goTo(num) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const next = document.getElementById('screen' + num);
-            next.classList.add('active');
-            
-            // Перезапуск анимации
-            next.querySelector('.fade-in')?.classList.remove('fade-in');
-            void next.offsetWidth;
-            next.querySelector('.fade-in')?.classList.add('fade-in');
-            
-            if (num === 6) {
-                launchConfetti();
-            }
-            
-            window.scrollTo(0, 0);
-        }
+/* звук без файлов */
+let AC;
+function tone(seq){
+  try{
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    let t = AC.currentTime;
+    seq.forEach(([f, d]) => {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(.0001, t);
+      g.gain.exponentialRampToValueAtTime(.18, t + .02);
+      g.gain.exponentialRampToValueAtTime(.0001, t + d);
+      o.connect(g).connect(AC.destination);
+      o.start(t); o.stop(t + d); t += d * .8;
+    });
+  }catch(e){}
+}
 
-        // Конфетти
-        function launchConfetti() {
-            const canvas = document.getElementById('confetti');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            const pieces = [];
-            const colors = ['#7c3aed', '#db2777', '#f472b6', '#a78bfa', '#fbbf24', '#34d399'];
-            
-            for (let i = 0; i < 120; i++) {
-                pieces.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    r: Math.random() * 6 + 4,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    speed: Math.random() * 3 + 2,
-                    angle: Math.random() * 6.28,
-                    spin: Math.random() * 0.2 - 0.1
-                });
-            }
-            
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                pieces.forEach(p => {
-                    p.y += p.speed;
-                    p.x += Math.sin(p.angle) * 1.5;
-                    p.angle += p.spin;
-                    
-                    ctx.beginPath();
-                    ctx.fillStyle = p.color;
-                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    if (p.y > canvas.height) {
-                        p.y = -10;
-                        p.x = Math.random() * canvas.width;
-                    }
-                });
-                requestAnimationFrame(draw);
-            }
-            draw();
-            
-            // Останавливаем через 6 секунд
-            setTimeout(() => {
-                canvas.style.opacity = '0';
-                canvas.style.transition = 'opacity 1s';
-            }, 6000);
-        }
-    </script>
+/* шаги квеста */
+let cur = 0, locked = false;
+function next(i){
+  cur = i;
+  const st = STEPS[i];
+  if (!st) return finish();
+  if (st.scan) return show("s2");
+  $("qn").textContent = "Вопрос " + st.n + " из " + TOTAL;
+  $("dots").innerHTML = Array.from({length: TOTAL}, (_, k) => '<b class="' + (k < st.n ? "on" : "") + '"></b>').join("");
+  $("qt").textContent = st.q;
+  const msg = $("qmsg"); msg.className = "msg"; msg.textContent = "";
+  const box = $("opts"); box.innerHTML = "";
+  const list = st.o.slice();
+  if (CONFIG.shuffle) for (let k = list.length - 1; k > 0; k--){ const j = Math.random() * (k + 1) | 0; [list[k], list[j]] = [list[j], list[k]]; }
+  list.forEach(o => {
+    const b = document.createElement("button");
+    b.className = "opt"; b.textContent = o.t; b.onclick = () => pick(b, o);
+    box.appendChild(b);
+  });
+  show("s1");
+}
+function pick(b, o){
+  if (locked) return;
+  const msg = $("qmsg");
+  if (o.ok){
+    locked = true; b.classList.add("ok");
+    msg.className = "msg good"; msg.textContent = o.say || "Верно!";
+    tone([[523,.15],[659,.15],[784,.3]]); buzz(60);
+    setTimeout(() => { locked = false; next(cur + 1); }, 1700);
+  }else{
+    b.classList.add("bad"); b.disabled = true;
+    b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
+    msg.className = "msg bad"; msg.textContent = o.say || "Не то. Попробуй ещё.";
+    tone([[196,.28]]);
+  }
+}
+
+/* сканер: зажми и держи 3 секунды */
+(function(){
+  const btn = $("scan"), ring = $("ring"), out = $("scanmsg"), C = 2 * Math.PI * 54;
+  let p = 0, held = false, done = false, last = performance.now(), tick = 0;
+  ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C;
+  const on = e => { e.preventDefault(); held = true; try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); }catch(_){} };
+  const off = () => { held = false; };
+  btn.addEventListener("pointerdown", on);
+  ["pointerup", "pointerleave", "pointercancel"].forEach(ev => btn.addEventListener(ev, off));
+  btn.addEventListener("contextmenu", e => e.preventDefault());
+  (function loop(t){
+    const dt = Math.min(50, t - last); last = t;
+    if (!done){
+      p = Math.max(0, Math.min(1, p + (held ? dt / 3000 : -dt / 1200)));
+      ring.style.strokeDashoffset = C * (1 - p);
+      if (held && t - tick > 450){ tick = t; tone([[300 + p * 500, .08]]); buzz(20); }
+      out.className = "msg";
+      out.textContent = held ? (p < .33 ? "Сигнал слабый…" : p < .66 ? "Теплее…" : "Очень горячо…")
+                             : (p > .02 ? "Не отпускай!" : "Жду сигнала…");
+      if (p >= 1){
+        done = true; out.className = "msg good"; out.textContent = "Сигнал расшифрован!";
+        tone([[523,.12],[659,.12],[784,.12],[1047,.4]]); buzz([80,60,200]);
+        setTimeout(() => next(cur + 1), 1000);
+      }
+    }
+    requestAnimationFrame(loop);
+  })(last);
+})();
+
+/* финал */
+function finish(){
+  show("s3");
+  tone([[523,.12],[659,.12],[784,.12],[1047,.18],[784,.12],[1047,.6]]); buzz([100,60,100,60,300]);
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const c = $("cf"), x = c.getContext("2d"), cols = ["#f2b84b", "#ff6b5a", "#e9f3ee", "#4fd1c5"];
+  c.width = innerWidth; c.height = innerHeight; c.style.display = "block";
+  const P = Array.from({length: 170}, () => ({
+    x: Math.random() * c.width, y: -20 - Math.random() * c.height * .5,
+    vx: (Math.random() - .5) * 4, vy: 2 + Math.random() * 4, s: 6 + Math.random() * 8,
+    r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: cols[Math.random() * 4 | 0]
+  }));
+  const t0 = performance.now();
+  (function f(t){
+    x.clearRect(0, 0, c.width, c.height);
+    P.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += .04; p.r += p.vr;
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c;
+      x.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6); x.restore();
+    });
+    if (t - t0 < 5500) requestAnimationFrame(f); else c.style.display = "none";
+  })(t0);
+}
+
+$("start").onclick = () => { tone([[392,.12],[587,.25]]); buzz(40); next(0); };
+</script>
 </body>
 </html>
